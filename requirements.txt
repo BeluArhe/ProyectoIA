@@ -1,0 +1,10 @@
+#Dependencias necesarias para el correcto funcionamiento de los códigos.
+pomegranate==0.14.8
+pgmpy==0.1.22
+numpy==1.23.5
+matplotlib==3.7.1
+networkx==3.1
+pymc
+scipy
+pandas
+arviz

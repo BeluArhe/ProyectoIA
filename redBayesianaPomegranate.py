@@ -113,24 +113,22 @@ def diagnosticar(modelo, sintomas):
     try:
         # Preparar las evidencias para pomegranate
         evidencias = {}
+        enfermedades = ['PG','Gripe','Neumonia','Tos','Fiebre','Dolor_cabeza']
         for nombre, valor in sintomas.items():
             # Mapear nombres de síntomas a nombres de nodos
-            if nombre == 'Fiebre':
-                evidencias['Fiebre'] = valor
-            elif nombre == 'Tos':
-                evidencias['Tos'] = valor
-            elif nombre == 'Dolor_cabeza':
-                evidencias['Dolor_cabeza'] = valor
-        
+            if nombre in ['Fiebre', 'Tos', 'Dolor_cabeza','Gripe','Neumonia','PG']:
+                evidencias[nombre] = valor
+                enfermedades.remove(nombre)
+
         # Realizar inferencia
         result = modelo.predict_proba(evidencias)
-        
         # Obtener resultados relevantes
-        diagnostico = {
-            'PG': result[0].parameters[0],
-            'Gripe': result[1].parameters[0],
-            'Neumonia': result[2].parameters[0]
-        }
+        i=0
+        diagnostico = {}
+        for r in result:
+            if isinstance(r, DiscreteDistribution):
+                diagnostico[enfermedades[i]] = r.parameters[0]
+                i = i+1
         
         return diagnostico
     
@@ -189,8 +187,8 @@ def main():
     mostrar_diagnostico(diag)
     
     # Caso 2: Paciente solo con dolor de cabeza
-    print("\nCaso 2: Fiebre='No', Tos='No', Dolor_cabeza='Sí'")
-    diag = diagnosticar(modelo, {'Fiebre': 'No', 'Tos': 'No', 'Dolor_cabeza': 'Sí'})
+    print("\nCaso 2: Tos='Sí', Gripe='Sí'")
+    diag = diagnosticar(modelo, {'Tos': 'Sí', 'Gripe': 'Sí'})
     mostrar_diagnostico(diag)
     
     # 4. Modo interactivo
